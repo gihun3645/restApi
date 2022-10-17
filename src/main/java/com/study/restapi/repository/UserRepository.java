@@ -1,2 +1,8 @@
-package com.study.restapi.repository;public class UserRepository {
+package com.study.restapi.repository;
+
+import com.study.restapi.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Integer> {
+//     optional<User> findByUsername(String username);
 }

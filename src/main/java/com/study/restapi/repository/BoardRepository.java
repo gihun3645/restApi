@@ -1,0 +1,7 @@
+package com.study.restapi.repository;
+
+import com.study.restapi.entity.Board;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BoardRepository extends JpaRepository<Board, Integer> {
+}
