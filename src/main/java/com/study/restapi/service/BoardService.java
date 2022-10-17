@@ -43,7 +43,7 @@ public class BoardService {
     public BoardDto write(BoardDto boardDto, User user) {
         Board board = new Board();
         board.setTitle(boardDto.getTitle());
-        board.setContent(board.getContent());
+        board.setContent(boardDto.getContent());
         board.setUser(user);
         boardRepository.save(board);
         return BoardDto.toDto(board);
