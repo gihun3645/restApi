@@ -3,7 +3,6 @@ package com.study.restapi.controller;
 
 import com.study.restapi.dto.CommentDto;
 import com.study.restapi.entity.User;
-import com.study.restapi.repository.CommentRepository;
 import com.study.restapi.repository.UserRepository;
 import com.study.restapi.response.Response;
 import com.study.restapi.service.CommentService;
