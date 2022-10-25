@@ -49,7 +49,15 @@ public class MessageService {
     // 삭제가 안 됐으면 List<MessageDto>에 추가시켜 리턴
 
     @Transactional(readOnly = true)
-    public List<MessageDto> receivedMessage(User user) {
+    public MessageDto findMessageById(int id) {
+        Message message = messageRepository.findById(id).orElseThrow(()->{
+           return new IllegalArgumentException("메세지를 찾을 수 없습니다.");
+        });
+        return MessageDto.toDto(message);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageDto> receivedMessages(User user) {
         // 받은 편지함 불러오기
         // 한명의 유저가 받은 모든 메세지
         // 추후 JWT를 이용해서 재구현 예정
@@ -72,22 +80,15 @@ public class MessageService {
     // 메세지를 보내거나 받은 유저가 현재 접속중인 유저와 같은지 확인하고,
     // 같다면, 보내거나 받은 유저에 해당하는 엔티티 필드의 값을 ture로 바꿔준다.
     // 이때 보낸 유저와 받은 유저 둘다 삭제를 했다면 DB에서 삭제를 한다.
-    public Object deleteMessageByReceiver(int id, User user) {
-        Message message = messageRepository.findById(id).orElseThrow(() -> {
-            return new IllegalArgumentException("메시지를 찾을 수 없습니다.");
-        });
-
-        if(user == message.getSender()) {
-            message.deleteByReceiver(); // 받은 사람에게 메시지 삭제
-            if (message.isDeleted()) {
-                // 받은사람과 보낸 사람 모두 삭제했으면, 데이터베이스에서 삭제요청
-                messageRepository.delete(message);
-                return "양쪽 모두 삭제";
-            }
-            return "한쪽만 삭제";
-        } else {
-            return new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
+    public Object deleteMessageByReceiver(MessageDto messageDto, User user) {
+        Message message = messageRepository.findById(messageDto.getId()).get();
+        message.deleteByReceiver(); // 받은 사람에게 메세지 삭제
+        if (message.isDeleted()) {
+            // 받은사람과 보낸 사람 모두 삭제했으면, 데이터베이스에서 삭제요청
+            messageRepository.delete(message);
+            return "양쪽 모두 삭제";
         }
+        return "한쪽만 삭제";
     }
 
     @Transactional(readOnly = true)
@@ -108,21 +109,14 @@ public class MessageService {
     }
     // 보낸 편지 삭제
     @Transactional
-    public Object deleteMessageBySender(int id, User user) {
-        Message message = messageRepository.findById(id).orElseThrow(()->{
-           return new IllegalArgumentException("메세지를 찾을 수 없습니다.");
-        });
-
-        if(user == message.getSender()) {
-            message.deleteBySender(); // 받은 사람에게 메세지 삭제
-            if(message.isDeleted()) {
-                // 받은사람과 보낸 사람 모두 삭제했으면, 데이터베이스에서 삭제요청
-                messageRepository.delete(message);
-                return "양쪽 모두 삭제";
-            }
-            return "한쪽만 삭제";
-        } else {
-            return new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
+    public Object deleteMessageBySender(MessageDto messageDto, User user) {
+        Message message = messageRepository.findById(messageDto.getId()).get();
+        message.deleteBySender();
+        if (message.isDeleted()) {
+            // 받은사람과 보낸 사람 모두 삭제했으면, 데이터베이스에서 삭제요청
+            messageRepository.delete(message);
+            return "양쪽 모두 삭제";
         }
+        return "한쪽만 삭제";
     }
 }

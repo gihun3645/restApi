@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageDto {
+    private int id;
     private String title;
     private String content;
     private String senderName;
@@ -17,6 +18,7 @@ public class MessageDto {
 
     public static MessageDto toDto(Message message) {
         return new MessageDto(
+                message.getId(),
                 message.getTitle(),
                 message.getContent(),
                 message.getSender().getName(),
